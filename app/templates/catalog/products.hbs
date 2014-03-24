@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td><strong>Id</strong></td>
+                    <td><strong>Name</strong></td>
+                    <td><strong>Price</strong></td>
+                    <td><strong>Inventory</strong></td>
+                    <td><strong>Active</strong></td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each product in products}}
+                        <tr>
+                            <td>{{#link-to 'catalog.product' product}}{{product.id}}{{/link-to}}</td>
+                            <td>{{product.name}}</td>
+                            <td>{{product.price}} &euro;</td>
+                            <td>{{product.inventory}}</td>
+                            <td>{{product.active}}</td>
+                        </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

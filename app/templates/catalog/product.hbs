@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span>Back</button>
+        {{#if isEditing}}
+            <button {{action "save"}} type="button" class="btn btn-success">Save</button>
+        {{else}}
+            <button {{action "edit"}} type="button" class="btn btn-primary">Edit</button>
+        {{/if}}
+    </div>
+    <div class="col-sm-12">
+        {{#if isEditing}}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>{{input class="edit" value=product.name}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>{{input class="edit" value=product.description}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Price</strong></td>
+                    <td>{{input class="edit" value=product.price}}&euro;</td>
+                </tr>
+                <tr>
+                    <td><strong>Inventory</strong></td>
+                    <td>{{input class="edit" value=product.inventory}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Image</strong></td>
+                    <td>{{input class="edit" value=product.image}}</td>
+                </tr>
+                </tbody>
+            </table>
+        {{else}}
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><strong>Name</strong></td><td>{{product.name}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Description</strong></td><td>{{product.description}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Price</strong></td><td>{{product.price}} &euro;</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inventory</strong></td><td>{{product.inventory}} pieces</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Image</strong></td><td>{{product.image}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {{/if}}
+    </div>
+</div>
