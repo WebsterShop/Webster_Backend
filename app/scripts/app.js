@@ -22,7 +22,6 @@ require('scripts/Components/*');
 require('scripts/Views/*');
 require('scripts/Router');
 
-
 Array.prototype.chunk = function(chunkSize) {
     var array=this;
     return [].concat.apply([],

@@ -5,22 +5,40 @@ Webster.CatalogProductController = Ember.ObjectController.extend({
         }
     }.property('Webster.Session.productCollection'),
 
-    isEditing: false,
+    categories: function(){
+        var categories = Webster.Session.get('categoryCollection');
+        var product = this.get('product');
+        if(categories && product){
+            for(i = 0; i < categories.length; i++){
+                if(jQuery.inArray(categories[i].id, product.categories) >= 0){
+                    categories[i].checked = true;
+                } else {
+                    categories[i].checked = false;
+                }
+            }
+            return categories;
+        }
+    }.property('Webster.Session.categoryCollection'),
 
     actions: {
-        edit: function(){
-            this.set('isEditing', true);
-        },
         save: function(){
+            var categories = Webster.Session.get('categoryCollection');
+            var productCategories = [];
+            for(i = 0; i < categories.length; i++){
+                if(categories[i].checked){
+                    productCategories.addObject(categories[i].id);
+                }
+            }
+
             Webster.MessageProcessor.processOutgoing({'type': 'Catalog\\Product', 'action': 'save', 'content': {
                 'id': this.get('product').id,
                 'name': this.get('product').name,
                 'description': this.get('product').description,
                 'price': this.get('product').price,
                 'inventory': this.get('product').inventory,
-                'image': this.get('product').image
+                'image': this.get('product').image,
+                'categories': productCategories
             }});
-            this.set('isEditing', false);
         }
     }
 });

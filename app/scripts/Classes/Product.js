@@ -4,5 +4,6 @@ Webster.Product = Ember.Object.extend({
     description: null,
     price: null,
     inventory: null,
-    image: null
+    image: null,
+    categories: null
 });
