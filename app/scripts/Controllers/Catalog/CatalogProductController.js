@@ -52,7 +52,8 @@ Webster.CatalogProductController = Ember.ObjectController.extend({
                 'description': this.get('product').description,
                 'price': this.get('product').price,
                 'inventory': this.get('product').inventory,
-                'image': this.get('product').image
+                'image': this.get('product').image,
+                'active': this.get('product').active
             }});
         }
     }
