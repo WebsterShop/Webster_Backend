@@ -1,0 +1,5 @@
+{
+    "deploydir": "/opt/appserver/webapps/shop/backend",
+    "dist": "dist",
+    "src": "app"
+}

@@ -1,9 +1,15 @@
 'use strict';
-var LIVERELOAD_PORT = 35730;
+var LIVERELOAD_PORT = 35729;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
+
+var MergeBuildPropertiesClass = require('./build/MergeBuildProperties');
+var propertyMerger = new MergeBuildPropertiesClass('buildDefaultProperties.json', 'buildProperties.json');
+
+// LOAD AND MERGE BUILD PROPERTIES
+var buildProperties = propertyMerger.merge();
 
 // # Globbing
 // for performance reasons we're only matching one level down:
@@ -26,6 +32,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         yeoman: yeomanConfig,
         pkg: grunt.file.readJSON('package.json'),
+        buildProperties: buildProperties,
         watch: {
             emberTemplates: {
                 files: '<%= yeoman.app %>/templates/**/*.hbs',
@@ -53,7 +60,7 @@ module.exports = function (grunt) {
         },
         connect: {
             options: {
-                port: 9001,
+                port: 9000,
                 // change this to '0.0.0.0' to access the server from outside
                 hostname: 'localhost'
             },
@@ -91,6 +98,15 @@ module.exports = function (grunt) {
                         '.tmp',
                         '<%= yeoman.dist %>/*',
                         '!<%= yeoman.dist %>/.git*'
+                    ]
+                }]
+            },
+            deploy: {
+                files: [{
+                    dot: true,
+                    src: [
+                        '<%= buildProperties.deploydir %>/**/*',
+                        '!<%= buildProperties.deploydir %>/vendor/**'
                     ]
                 }]
             },
@@ -132,14 +148,14 @@ module.exports = function (grunt) {
         // not used since Uglify task does concat,
         // but still available if needed
         /*concat: {
-            dist: {}
-        },*/
+         dist: {}
+         },*/
         // not enabled since usemin task does concat and uglify
         // check index.html to edit your build targets
         // enable this task if you prefer defining your build targets here
         /*uglify: {
-            dist: {}
-        },*/
+         dist: {}
+         },*/
         rev: {
             dist: {
                 files: {
@@ -200,14 +216,14 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     /*removeCommentsFromCDATA: true,
-                    // https://github.com/yeoman/grunt-usemin/issues/44
-                    //collapseWhitespace: true,
-                    collapseBooleanAttributes: true,
-                    removeAttributeQuotes: true,
-                    removeRedundantAttributes: true,
-                    useShortDoctype: true,
-                    removeEmptyAttributes: true,
-                    removeOptionalTags: true*/
+                     // https://github.com/yeoman/grunt-usemin/issues/44
+                     //collapseWhitespace: true,
+                     collapseBooleanAttributes: true,
+                     removeAttributeQuotes: true,
+                     removeRedundantAttributes: true,
+                     useShortDoctype: true,
+                     removeEmptyAttributes: true,
+                     removeOptionalTags: true*/
                 },
                 files: [{
                     expand: true,
@@ -218,28 +234,28 @@ module.exports = function (grunt) {
             }
         },
         replace: {
-          app: {
-            options: {
-              variables: {
-                ember: 'bower_components/ember/ember.js',
-                ember_data: 'bower_components/ember-data/ember-data.js'
-              }
+            app: {
+                options: {
+                    variables: {
+                        ember: 'bower_components/ember/ember.js',
+                        ember_data: 'bower_components/ember-data/ember-data.js'
+                    }
+                },
+                files: [
+                    {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
+                ]
             },
-            files: [
-              {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
-            ]
-          },
-          dist: {
-            options: {
-              variables: {
-                ember: 'bower_components/ember/ember.prod.js',
-                ember_data: 'bower_components/ember-data/ember-data.prod.js'
-              }
-            },
-            files: [
-              {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
-            ]
-          }
+            dist: {
+                options: {
+                    variables: {
+                        ember: 'bower_components/ember/ember.prod.js',
+                        ember_data: 'bower_components/ember-data/ember-data.prod.js'
+                    }
+                },
+                files: [
+                    {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
+                ]
+            }
         },
         // Put files not handled in other tasks here
         copy: {
@@ -255,6 +271,15 @@ module.exports = function (grunt) {
                         'images/{,*/}*.{webp,gif}',
                         'fonts/*'
                     ]
+                }]
+            },
+            deploy: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= buildProperties.dist %>',
+                    dest: '<%= buildProperties.deploydir %>',
+                    src: '**/*'
                 }]
             }
         },
@@ -368,6 +393,12 @@ module.exports = function (grunt) {
 
     grunt.registerTask('doc', [
         'yuidoc'
+    ]);
+
+    grunt.registerTask('deploy', [
+        'build',
+        'clean:deploy',
+        'copy:deploy'
     ]);
 
     grunt.registerTask('default', [
